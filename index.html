@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<!-- 付禹贺 - 股票排行榜页面 -->
+<!-- 学号：508  班级：电子商务  课程：高级网页设计 -->
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>股票排行榜 - 付禹贺</title>
+<style>
+/* 付禹贺 - 全局重置 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: "Microsoft YaHei", "PingFang SC", sans-serif;
+  background: #f0f2f5;
+  padding: 30px;
+}
+
+/* 付禹贺 - 外层卡片容器 */
+.fyh_card {
+  width: 340px;
+  background: #ffffff;
+  border: 1px solid #e6e6e6;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+/* 付禹贺 - tab 栏 */
+.fyh_tab_bar {
+  display: flex;
+  border-bottom: 1px solid #e6e6e6;
+}
+
+.fyh_tab {
+  flex: 1;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 14px;
+  color: #666666;
+  background: #f5f5f5;
+  cursor: pointer;
+  border: none;
+  border-bottom: 2px solid transparent;
+  transition: all 0.15s;
+}
+
+.fyh_tab:hover {
+  color: #333;
+}
+
+/* 付禹贺 - tab 选中状态（蓝色下划线） */
+.fyh_tab.fyh_active {
+  background: #ffffff;
+  color: #333333;
+  font-weight: bold;
+  border-bottom: 2px solid #1e6fff;
+}
+
+/* 付禹贺 - 股票列表表格 */
+.fyh_table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.fyh_table td {
+  padding: 10px 12px;
+  font-size: 14px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.fyh_table tr:last-child td {
+  border-bottom: none;
+}
+
+/* 付禹贺 - 股票名称列（左对齐） */
+.fyh_name_col {
+  text-align: left;
+  color: #333333;
+  white-space: nowrap;
+}
+
+/* 付禹贺 - 序号 */
+.fyh_index {
+  color: #333333;
+  margin-right: 4px;
+}
+
+/* 付禹贺 - 数字列（右对齐，红色——A股红涨） */
+.fyh_num_col {
+  text-align: right;
+  color: #e60012;
+  white-space: nowrap;
+}
+</style>
+</head>
+<body>
+
+<!-- 付禹贺 - 股票排行榜卡片 -->
+<div class="fyh_card">
+
+  <!-- 付禹贺 - 四个 tab 切换 -->
+  <div class="fyh_tab_bar">
+    <button class="fyh_tab fyh_active" data-tab="hs">沪深</button>
+    <button class="fyh_tab" data-tab="hg">沪股</button>
+    <button class="fyh_tab" data-tab="sz">深涨</button>
+    <button class="fyh_tab" data-tab="sd">深跌</button>
+  </div>
+
+  <!-- 付禹贺 - 股票数据表格 -->
+  <table class="fyh_table">
+    <tbody id="fyh_stock_body">
+      <!-- 付禹贺 - 数据由 JS 动态渲染 -->
+    </tbody>
+  </table>
+
+</div>
+
+<script>
+/* 付禹贺 - 股票数据（按 tab 分类） */
+var fyh_stockData = {
+  hs: [
+    { name: "浙能",     price: "8.88",  change: "+3.35", percent: "60.58%" },
+    { name: "天津松江", price: "8.16",  change: "+0.65", percent: "8.66%"  },
+    { name: "金瑞科技", price: "8.79",  change: "+0.42", percent: "5.02%"  },
+    { name: "宏发股份", price: "17.22", change: "+0.82", percent: "5.00%"  },
+    { name: "杭齿前进", price: "7.23",  change: "+0.34", percent: "4.93%"  }
+  ],
+  hg: [
+    { name: "浦发银行", price: "10.25", change: "+0.32", percent: "3.22%"  },
+    { name: "民生银行", price: "6.78",  change: "+0.15", percent: "2.26%"  },
+    { name: "保利发展", price: "12.50", change: "+0.28", percent: "2.29%"  },
+    { name: "上汽集团", price: "15.80", change: "+0.31", percent: "2.01%"  },
+    { name: "中国石油", price: "8.90",  change: "+0.16", percent: "1.83%"  }
+  ],
+  sz: [
+    { name: "天顺风能", price: "10.52", change: "+0.96", percent: "10.04%" },
+    { name: "兴源环境", price: "16.02", change: "+1.46", percent: "10.03%" },
+    { name: "北京君正", price: "36.92", change: "+3.36", percent: "10.01%" },
+    { name: "美盛文化", price: "32.87", change: "+2.99", percent: "10.01%" },
+    { name: "晓程股份", price: "15.16", change: "+1.38", percent: "10.01%" }
+  ],
+  sd: [
+    { name: "某跌股A", price: "9.80",  change: "-0.89", percent: "-8.32%" },
+    { name: "某跌股B", price: "12.40", change: "-1.02", percent: "-7.60%" },
+    { name: "某跌股C", price: "6.55",  change: "-0.48", percent: "-6.83%" },
+    { name: "某跌股D", price: "20.10", change: "-1.35", percent: "-6.30%" },
+    { name: "某跌股E", price: "15.60", change: "-0.92", percent: "-5.57%" }
+  ]
+};
+
+/* 付禹贺 - 渲染股票列表 */
+function fyh_renderStocks(tabKey) {
+  var fyh_list = fyh_stockData[tabKey];
+  var fyh_html = "";
+  for (var i = 0; i < fyh_list.length; i++) {
+    var fyh_item = fyh_list[i];
+    fyh_html += '<tr>' +
+      '<td class="fyh_name_col"><span class="fyh_index">' + (i + 1) + '.</span>' + fyh_item.name + '</td>' +
+      '<td class="fyh_num_col">' + fyh_item.price + '</td>' +
+      '<td class="fyh_num_col">' + fyh_item.change + '</td>' +
+      '<td class="fyh_num_col">' + fyh_item.percent + '</td>' +
+    '</tr>';
+  }
+  document.getElementById("fyh_stock_body").innerHTML = fyh_html;
+}
+
+/* 付禹贺 - tab 点击切换 */
+var fyh_tabs = document.querySelectorAll(".fyh_tab");
+for (var j = 0; j < fyh_tabs.length; j++) {
+  fyh_tabs[j].addEventListener("click", function () {
+    // 付禹贺 - 移除所有 active，给当前 tab 加 active
+    for (var k = 0; k < fyh_tabs.length; k++) {
+      fyh_tabs[k].classList.remove("fyh_active");
+    }
+    this.classList.add("fyh_active");
+    // 付禹贺 - 渲染对应数据
+    var fyh_key = this.getAttribute("data-tab");
+    fyh_renderStocks(fyh_key);
+  });
+}
+
+/* 付禹贺 - 页面加载时默认渲染"沪深" */
+fyh_renderStocks("hs");
+</script>
+
+</body>
+</html>
